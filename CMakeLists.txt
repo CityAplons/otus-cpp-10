@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
 
 set(PROJECT_REVISION 1 CACHE INTERNAL "Project revision (CI)")
-project(cmake_template
+project(bulk_server-web
     VERSION 0.0.${PROJECT_REVISION}
-    DESCRIPTION "General CMake template for C++ projects by N.Mikhailovskiy"
-    HOMEPAGE_URL "https://github.com/CityAplons/cmake-multiplatform-template"
+    DESCRIPTION "Bulk task with boost.asio"
+    HOMEPAGE_URL "https://github.com/CityAplons/otus-cpp-10"
     LANGUAGES CXX
 )
 
-set_property(GLOBAL PROPERTY G_CXX_STANDARD 14)
+set_property(GLOBAL PROPERTY G_CXX_STANDARD 20)
 set_property(GLOBAL PROPERTY G_CXX_STANDARD_REQUIRED ON)
 
 # Include utility functions
@@ -27,15 +27,15 @@ target_include_directories(version
 )
 
 # Describe build targets
-add_executable(helloworld_cli src/hello.cpp)
-target_link_libraries(helloworld_cli PRIVATE
+add_executable(bulk_server src/main.cpp)
+target_link_libraries(bulk_server PRIVATE
     version
 )
 
-set_compile_options(helloworld_cli)
+set_compile_options(bulk_server)
 set_compile_options(version)
 
-install(TARGETS helloworld_cli
+install(TARGETS bulk_server
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
@@ -45,6 +45,7 @@ add_unit_test(test/test_version.cpp version)
 
 # Packaging
 option(MAKE_PACKAGE "Add 'package' and 'package_source' build targets for packages" ON)
-if (MAKE_PACKAGE)
-	add_subdirectory(cmake/packaging)
+
+if(MAKE_PACKAGE)
+    add_subdirectory(cmake/packaging)
 endif()
