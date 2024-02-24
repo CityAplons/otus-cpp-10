@@ -60,34 +60,37 @@ if(NOT Boost_FOUND)
     )
     target_link_libraries(bulk_server
         PUBLIC ${Boost_hardcoded_libraries})
-    install(IMPORTED_RUNTIME_ARTIFACTS ${Boost_hardcoded_libraries})
+
+    install(FILES ${Boost_hardcoded_libraries} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 else()
     target_link_libraries(bulk_server PUBLIC
         Boost::system
         Boost::program_options
     )
-    install(IMPORTED_RUNTIME_ARTIFACTS ${Boost_LIBRARIES})
+    install(IMPORTED_RUNTIME_ARTIFACTS ${Boost_LIBRARIES} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
 target_link_libraries(bulk_server PRIVATE
     version
 )
 
-set_compile_options(bulk_server)
-set_compile_options(version)
-
 # Runtime deps
 set_target_properties(bulk_server PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
+
 if(UNIX AND NOT APPLE)
-    set_target_properties(bulk_server PROPERTIES INSTALL_RPATH "$ORIGIN/../lib64")
+    set_target_properties(bulk_server PROPERTIES INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
 elseif(APPLE)
-    set_target_properties(bulk_server PROPERTIES INSTALL_RPATH "@loader_path/../lib64")
+    set_target_properties(bulk_server PROPERTIES INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}")
 endif()
+
 set_target_properties(bulk_server PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 install(TARGETS bulk_server
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+set_compile_options(bulk_server)
+set_compile_options(version)
 
 # Describe unit tests
 enable_testing()
