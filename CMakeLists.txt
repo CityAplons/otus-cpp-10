@@ -34,11 +34,12 @@ target_include_directories(version
 )
 
 # Describe build targets
-add_executable(bulk_server src/main.cpp)
+add_executable(bulk_server src/asio/server.cpp)
 target_link_libraries(bulk_server PRIVATE
     version
     Boost::system
     Boost::program_options
+    ${Boost_LIBRARIES}
 )
 
 set_compile_options(bulk_server)
