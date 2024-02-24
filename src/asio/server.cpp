@@ -5,12 +5,14 @@
 asio::awaitable<void>
 Listener(uint16_t port, size_t size) {
     BulkContext context;
+    const auto executor = co_await asio::this_coro::executor;
     auto printer = std::make_shared<PrintComposite>();
     printer->Add(std::make_shared<ThreadedPrintable<FilePrintFunctor, 2>>());
     printer->Add(std::make_shared<ThreadedPrintable<ConsolePrintFunctor>>());
 
-    auto processor = std::make_shared<CommandProcessor>(size, printer);
-    const auto executor = co_await asio::this_coro::executor;
+    // Some slow prints, just for async tests
+    // printer->Add(std::make_shared<FilePrint>());
+    // printer->Add(std::make_shared<ConsolePrint>());
 
     otus::Log::Get().Info("Listing TCP v4 port {}, bulk size {}", port, size);
     tcp::acceptor acceptor{executor, {tcp::v4(), port}};
@@ -19,8 +21,9 @@ Listener(uint16_t port, size_t size) {
     for (;;) {
         auto socket = co_await acceptor.async_accept(asio::use_awaitable);
         otus::Log::Get().Info("New client conencted, hit no {}", ++hits);
-        std::make_shared<BulkSession>(std::move(socket), context, processor,
-                                      printer)
+        std::make_shared<BulkSession>(
+            std::move(socket), context,
+            std::make_shared<CommandProcessor>(size, printer), printer)
             ->start();
     }
 }
