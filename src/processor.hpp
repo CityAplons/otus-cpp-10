@@ -1,25 +1,20 @@
 #pragma once
 
 #include "bulk.hpp"
-#include "command.hpp"
 #include "log.hpp"
 
 class CommandProcessor {
   public:
-    CommandProcessor() : queue_(std::make_shared<CommandQueue>()) {
-        otus::Log::Get().Info("Bulk created with default block size = {}",
-                              blockSize_);
-    };
-
-    CommandProcessor(int blockSize)
-        : blockSize_(blockSize), queue_(std::make_shared<CommandQueue>()) {
+    explicit CommandProcessor(int blockSize,
+                              std::shared_ptr<IPrintable> printer)
+        : blockSize_(blockSize), queue_(printer) {
         otus::Log::Get().Info("Bulk created with new block size {}",
                               blockSize_);
     }
 
     ~CommandProcessor() {
         if (depth_ == 0) {
-            OnBulkFlush(queue_).Execute();
+            queue_.ExecuteAll();
         }
     }
 
@@ -33,7 +28,7 @@ class CommandProcessor {
             counter_ = 0;
 
             if (depth_ == 0) {
-                OnBulkFlush(queue_).Execute();
+                queue_.ExecuteAll();
             }
             ++depth_;
         } else if (line.compare("}") == 0) {
@@ -41,19 +36,21 @@ class CommandProcessor {
 
             --depth_;
             if (depth_ == 0) {
-                OnBulkFlush(queue_).Execute();
+                queue_.ExecuteAll();
             }
         } else if (line[0] == '=') {
             // Set new block-size by command
             counter_ = 0;
             blockSize_ = std::abs(std::atoi(&line[1]));
-            otus::Log::Get().Warn("Set-size {}", blockSize_);
+
+            std::string info = std::format("Set-size {}", blockSize_);
+            otus::Log::Get().Warn(info);
         } else {
-            OnBulkAppend(queue_, line).Execute();
+            queue_.Add(line);
         }
 
         if (counter_ == blockSize_) {
-            OnBulkFlush(queue_).Execute();
+            queue_.ExecuteAll();
             counter_ = 0;
         }
     }
@@ -62,5 +59,5 @@ class CommandProcessor {
     int counter_ = 0, depth_ = 0;
     int blockSize_ = 1;
 
-    std::shared_ptr<CommandQueue> queue_;
+    CommandQueue queue_;
 };

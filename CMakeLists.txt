@@ -11,6 +11,13 @@ project(bulk_server-web
 set_property(GLOBAL PROPERTY G_CXX_STANDARD 20)
 set_property(GLOBAL PROPERTY G_CXX_STANDARD_REQUIRED ON)
 
+# Boost
+set(Boost_USE_STATIC_LIBS OFF) 
+set(Boost_USE_RELEASE_LIBS ON)
+set(Boost_USE_MULTITHREADED ON)  
+set(Boost_USE_STATIC_RUNTIME OFF) 
+find_package(Boost COMPONENTS system program_options REQUIRED) 
+
 # Include utility functions
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
@@ -30,6 +37,8 @@ target_include_directories(version
 add_executable(bulk_server src/main.cpp)
 target_link_libraries(bulk_server PRIVATE
     version
+    Boost::system
+    Boost::program_options
 )
 
 set_compile_options(bulk_server)
