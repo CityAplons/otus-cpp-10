@@ -61,7 +61,7 @@ if(NOT Boost_FOUND)
     target_link_libraries(bulk_server
         PUBLIC ${Boost_hardcoded_libraries})
 
-    install(FILES ${Boost_hardcoded_libraries} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(DIRECTORY ${BOOST_ROOT_DIR}/lib DESTINATION ${CMAKE_INSTALL_LIBDIR})
 else()
     target_link_libraries(bulk_server PUBLIC
         Boost::system
