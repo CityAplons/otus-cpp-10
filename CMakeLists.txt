@@ -37,15 +37,6 @@ target_include_directories(version
 # Describe build targets
 add_executable(bulk_server src/asio/server.cpp)
 
-# Runtime deps
-set_target_properties(bulk_server PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
-if(UNIX AND NOT APPLE)
-    set_target_properties(bulk_server PROPERTIES INSTALL_RPATH "$ORIGIN/../lib64")
-elseif(APPLE)
-    set_target_properties(bulk_server PROPERTIES INSTALL_RPATH "@loader_path/../lib64")
-endif()
-set_target_properties(bulk_server PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
-
 # Mess around with boost on Windows/Ubuntu targets
 if(NOT Boost_FOUND)
     set(BOOST_ROOT_DIR ${CMAKE_BINARY_DIR}/contrib/boost)
@@ -84,6 +75,15 @@ target_link_libraries(bulk_server PRIVATE
 
 set_compile_options(bulk_server)
 set_compile_options(version)
+
+# Runtime deps
+set_target_properties(bulk_server PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
+if(UNIX AND NOT APPLE)
+    set_target_properties(bulk_server PROPERTIES INSTALL_RPATH "$ORIGIN/../lib64")
+elseif(APPLE)
+    set_target_properties(bulk_server PROPERTIES INSTALL_RPATH "@loader_path/../lib64")
+endif()
+set_target_properties(bulk_server PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 install(TARGETS bulk_server
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
