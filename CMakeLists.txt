@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 set(PROJECT_REVISION 1 CACHE INTERNAL "Project revision (CI)")
 project(bulk_server-web
-    VERSION 0.0.${PROJECT_REVISION}
+    VERSION 1.0.${PROJECT_REVISION}
     DESCRIPTION "Bulk task with boost.asio"
     HOMEPAGE_URL "https://github.com/CityAplons/otus-cpp-10"
     LANGUAGES CXX
@@ -39,7 +39,6 @@ target_link_libraries(bulk_server PRIVATE
     version
     Boost::system
     Boost::program_options
-    ${Boost_LIBRARIES}
 )
 
 set_compile_options(bulk_server)
