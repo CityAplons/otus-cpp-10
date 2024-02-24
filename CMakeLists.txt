@@ -45,7 +45,7 @@ if(NOT Boost_FOUND)
     set(Boost_hardcoded_INCLUDE_DIRS ${BOOST_ROOT_DIR}/include)
 
     foreach(component ${Boost_BUILD_COMPONENTS})
-        list(APPEND Boost_hardcoded_libraries ${BOOST_ROOT_DIR}/lib/libboost_${component}.so)
+        list(APPEND Boost_hardcoded_libraries ${BOOST_ROOT_DIR}/${CMAKE_INSTALL_LIBDIR}/libboost_${component}.so)
     endforeach()
 
     set(BOOST_REQUESTED_VERSION 1.81.0)
@@ -61,9 +61,8 @@ if(NOT Boost_FOUND)
     target_link_libraries(bulk_server
         PUBLIC ${Boost_hardcoded_libraries})
 
-    install(DIRECTORY ${BOOST_ROOT_DIR}/lib
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        FILES_MATCHING PATTERN "*.so")
+    install(DIRECTORY ${BOOST_ROOT_DIR}/${CMAKE_INSTALL_LIBDIR}
+        FILES_MATCHING PATTERN "*.so*")
 else()
     target_link_libraries(bulk_server PUBLIC
         Boost::system
