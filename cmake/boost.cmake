@@ -19,13 +19,13 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-if(NOT BOOST_BUILD_COMPONENTS)
+if(NOT Boost_BUILD_COMPONENTS)
 	message(FATAL_ERROR "No COMPONENTS specified for Boost")
 endif()
 
 # Create a list(string) for the build command (e.g. --with-program_options;--with-system)
 # and assigns it to BOOST_COMPONENTS_FOR_BUILD
-foreach(component ${BOOST_BUILD_COMPONENTS})
+foreach(component ${Boost_BUILD_COMPONENTS})
 	list(APPEND BOOST_COMPONENTS_FOR_BUILD --with-${component})
 endforeach()
 
