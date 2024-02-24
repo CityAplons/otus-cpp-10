@@ -11,18 +11,19 @@ project(bulk_server-web
 set_property(GLOBAL PROPERTY G_CXX_STANDARD 20)
 set_property(GLOBAL PROPERTY G_CXX_STANDARD_REQUIRED ON)
 
-# Boost
-set(Boost_USE_STATIC_LIBS OFF) 
-set(Boost_USE_RELEASE_LIBS ON)
-set(Boost_USE_MULTITHREADED ON)  
-set(Boost_USE_STATIC_RUNTIME OFF) 
-find_package(Boost COMPONENTS system program_options REQUIRED) 
-
 # Include utility functions
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
 include(compiler)
 include(test)
+
+# Boost
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_RELEASE_LIBS ON)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+set(Boost_BUILD_COMPONENTS system program_options)
+find_package(Boost COMPONENTS ${Boost_BUILD_COMPONENTS})
 
 # Transparent versioning
 include_directories(cmake/version)
@@ -35,11 +36,39 @@ target_include_directories(version
 
 # Describe build targets
 add_executable(bulk_server src/asio/server.cpp)
-target_link_libraries(bulk_server PRIVATE
-    version
-    Boost::system
-    Boost::program_options
-)
+
+# Mess around with boost on Windows/Ubuntu targets
+if(NOT Boost_FOUND)
+    set(BOOST_ROOT_DIR contrib/boost)
+    set(BOOST_ROOT ${BOOST_ROOT_DIR})
+
+    set(Boost_hardcoded_INCLUDE_DIRS ${BOOST_ROOT_DIR}/include)
+
+    foreach(component ${Boost_BUILD_COMPONENTS})
+        list(APPEND Boost_hardcoded_libraries ${BOOST_ROOT_DIR}/lib/libboost_${component}.so)
+    endforeach()
+
+    set(BOOST_REQUESTED_VERSION 1.81.0)
+    message(WARNING "Boost library NOT found, download boost-${BOOST_REQUESTED_VERSION} and build from boost website.")
+    include(boost)
+    add_custom_target(ExternalProject_Boost
+        DEPENDS Boost
+    )
+    add_dependencies(bulk_server ExternalProject_Boost)
+    target_include_directories(bulk_server
+        PUBLIC ${Boost_hardcoded_INCLUDE_DIRS}
+    )
+    target_link_libraries(bulk_server PRIVATE
+        version
+        ${Boost_hardcoded_INCLUDE_DIRS}
+    )
+else()
+    target_link_libraries(bulk_server PRIVATE
+        version
+        Boost::system
+        Boost::program_options
+    )
+endif()
 
 set_compile_options(bulk_server)
 set_compile_options(version)
