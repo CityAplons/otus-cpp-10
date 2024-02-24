@@ -58,17 +58,16 @@ if(NOT Boost_FOUND)
     target_include_directories(bulk_server
         PUBLIC ${Boost_hardcoded_INCLUDE_DIRS}
     )
-    target_link_libraries(bulk_server PRIVATE
-        version
-        ${Boost_hardcoded_INCLUDE_DIRS}
-    )
 else()
-    target_link_libraries(bulk_server PRIVATE
-        version
+    target_link_libraries(bulk_server PUBLIC
         Boost::system
         Boost::program_options
     )
 endif()
+
+target_link_libraries(bulk_server PRIVATE
+    version
+)
 
 set_compile_options(bulk_server)
 set_compile_options(version)
