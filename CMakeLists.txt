@@ -39,7 +39,7 @@ add_executable(bulk_server src/asio/server.cpp)
 
 # Mess around with boost on Windows/Ubuntu targets
 if(NOT Boost_FOUND)
-    set(BOOST_ROOT_DIR contrib/boost)
+    set(BOOST_ROOT_DIR ${CMAKE_BINARY_DIR}/contrib/boost)
     set(BOOST_ROOT ${BOOST_ROOT_DIR})
 
     set(Boost_hardcoded_INCLUDE_DIRS ${BOOST_ROOT_DIR}/include)
