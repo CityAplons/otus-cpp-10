@@ -61,7 +61,7 @@ if(NOT Boost_FOUND)
     target_link_libraries(bulk_server
         PUBLIC ${Boost_hardcoded_libraries})
 
-    install(DIRECTORY ${BOOST_ROOT_DIR}/lib DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(DIRECTORY ${BOOST_ROOT_DIR}/lib FILES_MATCHING PATTERN "*.so")
 else()
     target_link_libraries(bulk_server PUBLIC
         Boost::system
