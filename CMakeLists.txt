@@ -62,6 +62,7 @@ if(NOT Boost_FOUND)
         PUBLIC ${Boost_hardcoded_libraries})
 
     install(DIRECTORY ${BOOST_ROOT_DIR}/${CMAKE_INSTALL_LIBDIR}
+        DESTINATION "."
         FILES_MATCHING PATTERN "*.so*")
 else()
     target_link_libraries(bulk_server PUBLIC
