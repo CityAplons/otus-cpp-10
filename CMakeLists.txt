@@ -58,6 +58,8 @@ if(NOT Boost_FOUND)
     target_include_directories(bulk_server
         PUBLIC ${Boost_hardcoded_INCLUDE_DIRS}
     )
+    target_link_libraries(bulk_server
+        PUBLIC ${Boost_hardcoded_libraries})
 else()
     target_link_libraries(bulk_server PUBLIC
         Boost::system
